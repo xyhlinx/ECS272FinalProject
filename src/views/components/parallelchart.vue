@@ -1,5 +1,11 @@
 <template>
-    <div id="parallel"></div>
+    <div id="col1">
+        <div id="parallel"></div>
+    </div>
+    <div id="col2">
+        <div id="bar"><h1>bar</h1></div>
+        <div id="scatter"><h1>scatter</h1></div> 
+    </div>
 </template>
 
 <script>
@@ -10,7 +16,7 @@ export default {
     data() {
         return {
             process_data: undefined,
-            selected_data: undefined,
+            selected_data: [],
             keys: ["price", "metacritic_score", "achievements", "recommendations", "average_playtime_forever"],
             genres: ["Indie", "Action", "Casual", "Adventure","Simulation", 
                     "Strategy", "RPG", "Early Access", "Free to Play", "Sports"],
@@ -21,7 +27,7 @@ export default {
     },
     mounted() {
         this.processData(rawdata)
-        this.drawParallelChart(this.process_data, '#parallel')
+        this.drawParallelChart(this.process_data, '#parallel', "#bar")
     },
     methods: {
         processData(data) {
@@ -38,13 +44,13 @@ export default {
             console.log(preData)
             this.process_data = preData
         },
-        drawParallelChart(data, id) {
+        drawParallelChart(data, parallel_id, bar_id) {
             const margin = { top: 30, right: 10, bottom: 30, left: 10 };
             const height = this.keys.length * 120;
             const width = 800;
             const brushHeight = 50;
 
-            const svg = d3.select(id).append("svg")
+            const svg = d3.select(parallel_id).append("svg")
                             .attr("width", width + margin.left + margin.right)
                             .attr("height", height + margin.top + margin.bottom)
                             .append("g")
@@ -116,7 +122,33 @@ export default {
                     .attr("stroke-linejoin", "round")
                     .attr("stroke", "white"))
                 .call(brush)
-        }
+        },
     }
 }
 </script>
+
+<style>
+#col1 {
+    height: 100%;
+    width: 50%;
+    position: relative;
+}
+
+#parallel {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+#col2 {
+    height: 100%;
+    width: 30%;
+    position: relative;
+}
+
+#bar, #scatter {
+    height: 50%;
+    width: 50%;
+    position: relative;
+}
+</style>
