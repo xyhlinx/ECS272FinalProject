@@ -44,7 +44,7 @@ def filter_genre(dic, key, _id, removal_ids, *args, **kwargs):
                 del dic['tags']
                 return
     elif len(overlap) == 1:
-        dic[key] = key
+        dic[key] = list(overlap)[0]
         if 'tags' in dic:
             del dic['tags']
         return
@@ -96,5 +96,5 @@ with open('data/games.json') as f:
     for rid in removal_ids:
         del res[rid]
 
-with open('./data/filtered_data.json', 'w') as wf:
+with open('./data/filtered.json', 'w') as wf:
     wf.write(json.dumps(res, indent=4))
