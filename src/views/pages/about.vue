@@ -1,8 +1,7 @@
 <template>
     <div id="about">
         <div id="col1">
-            <div id="bar_view">
-                <h1>Welcome About</h1>
+            <div id="parallel_view">
                 <ParallelChart v-if="dataExists" />
             </div>
         </div>
@@ -56,17 +55,17 @@ export default {
 }
 #col1 {
     height: 100%;
-    width: 50%;
+    width: 70%;
     position: relative;
 }
-#bar_view {
+#parallel_view {
     height: 100%;
     width: 80%;
     position: relative;
 }
 #col2 {
     height: 100%;
-    width: 50%;
+    width: 30%;
     position: relative;
 }
 
