@@ -1,9 +1,10 @@
 <template>
     <div id="col1">
         <div id="parallel"></div>
+        <div id="legend"></div>
     </div>
     <div id="col2">
-        <div id="bar_view"></div>
+        <div id="bar_view"><h1>Average playtime by different genres</h1></div>
         <div id="scatter_view"><Dropdown @selectedChange="handleChange" /></div> 
     </div>
 </template>
@@ -35,6 +36,7 @@ export default {
     },
     mounted() {
         this.processData(rawdata)
+        this.drawLegend('#legend')
         this.drawParallelChart(this.process_data, '#parallel', '#bar_view', '#scatter_view', this.drawBarChart, this.drawScatter)
     },
     methods: {
@@ -51,6 +53,50 @@ export default {
             console.log("total games: ", count)
             console.log(preData)
             this.process_data = preData
+        },
+        drawLegend(id) {
+            const height = 120;
+            const width = 1000;
+            
+            const svg = d3.select(id).append("svg")
+                            .attr("width", width)
+                            .attr("height", height - 50);
+
+            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
+
+            let dataL = 0;
+            let offset = 90;
+
+            const legend = svg.selectAll(".legend")
+                                .data(this.genres)
+                                .enter()
+                                .append("g")
+                                .attr("class", "legend")
+                                .attr("transform", function(d, i) {
+                                    if (i == 0) {
+                                        dataL = d.length + offset;
+                                        return "translate(0, 0)"
+                                    } else {
+                                        let newdataL = dataL;
+                                        dataL += d.length + offset;
+                                        return `translate(${newdataL}, 0)`
+                                    }
+                                })
+
+            legend.append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", 15)
+                    .attr("height", 15)
+                    .style("fill", function(d) { return (colors(d)); })
+
+            legend.append("text")
+                    .attr("x", 20)
+                    .attr("y", 15)
+                    .text(function(d, i) { return d; })
+                    .attr("class", "textselected")
+                    .style("text-anchor", "start")
+                    .style("font-size", 15)
         },
         drawParallelChart(data, parallel_id, bar_id, scatter_id, cb1, cb2) {
             const margin = { top: 30, right: 10, bottom: 30, left: 10 };
@@ -332,7 +378,13 @@ export default {
 }
 
 #parallel {
-    height: 100%;
+    height: 90%;
+    width: 100%;
+    position: relative;
+}
+
+#legend {
+    height: 10%;
     width: 100%;
     position: relative;
 }
