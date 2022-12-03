@@ -3,28 +3,35 @@
         <div id="parallel"></div>
     </div>
     <div id="col2">
-        <div id="bar_view"><h1>bar</h1></div>
-        <div id="scatter_view"><h1>scatter</h1></div> 
+        <div id="bar_view"></div>
+        <div id="scatter_view"><Dropdown @selectedChange="handleChange" /></div> 
     </div>
 </template>
 
 <script>
 import * as d3 from "d3";
-import rawdata from "../../assets/data/filtered_data.json"
+import Dropdown from "./dropdown.vue"
+import rawdata from "../../assets/data/filtered.json"
+
+let selected_data = [];
 export default {
     name: 'ParallelChart',
     data() {
         return {
             process_data: undefined,
             dataExists: false,
-            selected_data: [],
+            dropdown_selected: { id: 0, text: 'price'},
             keys: ["price", "metacritic_score", "achievements", "recommendations", "average_playtime_forever"],
             genres: ["Indie", "Action", "Casual", "Adventure","Simulation", 
                     "Strategy", "RPG", "Early Access", "Free to Play", "Sports"],
         }
     },
+    components: {
+        Dropdown
+    },
     props: {
-        myParallelChartData: Array
+        myParallelChartData: Array,
+        mySelection: Object
     },
     mounted() {
         this.processData(rawdata)
@@ -76,10 +83,10 @@ export default {
                 });
                 //console.log(selected)
                 this.dataExists = true;
-                this.selected_data = selected;
-                //console.log(this.selected_data)
-                cb1(this.selected_data, bar_id)
-                cb2(this.selected_data, scatter_id)
+                selected_data = selected;
+                console.log(selected_data)
+                cb1(selected_data, bar_id)
+                cb2(selected_data, scatter_id)
                 svg.property("value", selected).dispatch("input");
             }
 
@@ -156,7 +163,7 @@ export default {
             //console.log(barData)
 
             for (const d in barData) {
-                console.log(barData[d])
+                //console.log(barData[d])
                 const temp = {
                     genres: d,
                     time: barData[d].time/barData[d].count
@@ -164,7 +171,7 @@ export default {
                 finalData.push(temp)
             }
 
-            console.log(finalData)
+            //console.log(finalData)
 
             // draw
             const margin = { top: 40, right: 40, bottom: 120, left: 100 };
@@ -202,9 +209,70 @@ export default {
                 .attr("width", d => x(d.time))
                 .attr("height", y.bandwidth())
                 .attr("fill", function(d) { return (colors(d.genres)); })
+
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width)
+                .attr("y", height + margin.top + 10)
+                .text("Average playtime(Hour)")
+
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -margin.top)
+                .text("Genres")
         },
         drawScatter(data, id) {
-            console.log("scatter")
+            console.log("scatter " + this.dropdown_selected.text)
+            console.log(data)
+
+            const selection = this.dropdown_selected.text;
+
+            const margin = { top: 40, right: 40, bottom: 120, left: 100 };
+            const height = 300;
+            const width = 500;
+
+            d3.selectAll(".scatterplot").remove();
+
+            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
+
+            const svg = d3.select(id).append("svg")
+                            .attr("class", "scatterplot")
+                            .attr("width", width + margin.left + margin.right)
+                            .attr("height", height + margin.top + margin.bottom)
+                            .append("g")
+                            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+            const x = d3.scaleLinear().domain([0, d3.max(data, d => d.average_playtime_forever)]).range([0, width]);
+
+            svg.append("g")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .attr("transform", "translate(-10, 0)rotate(-45)")
+                .style("text-anchor", "end");
+
+            const y = d3.scaleLinear().domain([d3.min(data, d => d[selection]), d3.max(data, d => d[selection])]).range([height, 0]);
+            
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            svg.append("g")
+                .selectAll("dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", function(d) { return "dot" + d.genres })
+                .attr("cx", function(d) { return x(d.average_playtime_forever) })
+                .attr("cy", function(d) { return y(d[selection])})
+                .attr("r", 5)
+                .style("fill", function(d) { return colors(d.genres)})
+        },
+        handleChange(selected) {
+            console.log("change y axis " + selected.id + selected.text);
+            this.dropdown_selected = selected
+            this.drawScatter(selected_data, "#scatter_view")
         }
     }
 }
