@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import BarChart from "../components/barchart.vue"
 import ParallelChart from "../components/parallelchart.vue"
 import csvPath from "../../assets/data/SF_Historical_Ballot_Measures.csv"
 import * as d3 from "d3";
@@ -19,7 +18,6 @@ export default {
         }
     },
     components: {
-        BarChart,
         ParallelChart
     },
     created() {
