@@ -1,9 +1,10 @@
 <template>
     <div id="col1">
         <div id="parallel"></div>
+        <div id="legend"></div>
     </div>
     <div id="col2">
-        <div id="bar_view"></div>
+        <div id="bar_view"><h1>Average playtime by different genres</h1></div>
         <div id="scatter_view"><Dropdown @selectedChange="handleChange" /></div> 
     </div>
 </template>
@@ -35,6 +36,7 @@ export default {
     },
     mounted() {
         this.processData(rawdata)
+        this.drawLegend('#legend')
         this.drawParallelChart(this.process_data, '#parallel', '#bar_view', '#scatter_view', this.drawBarChart, this.drawScatter)
     },
     methods: {
@@ -51,6 +53,50 @@ export default {
             console.log("total games: ", count)
             console.log(preData)
             this.process_data = preData
+        },
+        drawLegend(id) {
+            const height = 120;
+            const width = 1000;
+            
+            const svg = d3.select(id).append("svg")
+                            .attr("width", width)
+                            .attr("height", height - 50);
+
+            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
+
+            let dataL = 0;
+            let offset = 90;
+
+            const legend = svg.selectAll(".legend")
+                                .data(this.genres)
+                                .enter()
+                                .append("g")
+                                .attr("class", "legend")
+                                .attr("transform", function(d, i) {
+                                    if (i == 0) {
+                                        dataL = d.length + offset;
+                                        return "translate(0, 0)"
+                                    } else {
+                                        let newdataL = dataL;
+                                        dataL += d.length + offset;
+                                        return `translate(${newdataL}, 0)`
+                                    }
+                                })
+
+            legend.append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", 15)
+                    .attr("height", 15)
+                    .style("fill", function(d) { return (colors(d)); })
+
+            legend.append("text")
+                    .attr("x", 20)
+                    .attr("y", 15)
+                    .text(function(d, i) { return d; })
+                    .attr("class", "textselected")
+                    .style("text-anchor", "start")
+                    .style("font-size", 15)
         },
         drawParallelChart(data, parallel_id, bar_id, scatter_id, cb1, cb2) {
             const margin = { top: 30, right: 10, bottom: 30, left: 10 };
@@ -234,6 +280,7 @@ export default {
             const width = 500;
 
             d3.selectAll(".scatterplot").remove();
+            d3.selectAll(".tooltip").remove();
 
             const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
 
@@ -258,6 +305,35 @@ export default {
             svg.append("g")
                 .call(d3.axisLeft(y));
 
+            const tooltip = d3.select(id).append("div")
+                                .style("position", "absolute")
+                                .style("opacity", 0)
+                                .attr("class", "tooltip")
+                                .style("background-color", "white")
+                                .style("border", "solid")
+                                .style("border-width", "1px")
+                                .style("border-radius", "5px")
+                                .style("padding", "10px");
+
+            const mouseover = function(event, d) {
+                tooltip.style("opacity", 1)
+            }
+
+            const mousemove = function(event, d) {
+                tooltip
+                    .html(`Name: ${d.name}<br>
+                           Genre: ${d.genres}`)
+                    .style("left", (event.x)/8 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                    .style("top", (event.y)/8 + "px")
+            }
+
+            const mouseleave = function(event,d) {
+                tooltip
+                  .transition()
+                  .duration(200)
+                  .style("opacity", 0)
+            }
+
             svg.append("g")
                 .selectAll("dot")
                 .data(data)
@@ -268,6 +344,22 @@ export default {
                 .attr("cy", function(d) { return y(d[selection])})
                 .attr("r", 5)
                 .style("fill", function(d) { return colors(d.genres)})
+                .on("mouseover", mouseover )
+                .on("mousemove", mousemove )
+                .on("mouseleave", mouseleave )
+
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width)
+                .attr("y", height + margin.top + 10)
+                .text("Average playtime(Hour)")
+
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -margin.top)
+                .text(selection)
         },
         handleChange(selected) {
             console.log("change y axis " + selected.id + selected.text);
@@ -286,7 +378,13 @@ export default {
 }
 
 #parallel {
-    height: 100%;
+    height: 90%;
+    width: 100%;
+    position: relative;
+}
+
+#legend {
+    height: 10%;
     width: 100%;
     position: relative;
 }
