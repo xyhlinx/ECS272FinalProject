@@ -6,9 +6,19 @@ def delete_from_dict(dic, key, *args, **kwargs):
     if key in dic:
         del dic[key]
 
-def filter_by_amount(dic, key, amount=1, *args, **kwargs):
-    if key in dic and isinstance(dic[key], list):
-        dic[key] = [dic[key][0]] if dic[key] else []
+def filter_array(func):
+    def wrapper(dic, key, *args, **kwargs):
+        if key in dic and isinstance(dic[key], list) and func(dic[key]):
+            dic[key] = [dic[key][0]] if dic[key] else []
+    return wrapper
+
+def filter_value(func):
+    def wrapper(dic, key, _id, removal_ids, *args, **kwargs):
+        if key not in dic:
+            return
+        if not func(dic[key]):
+            removal_ids.add(_id)
+    return wrapper
 
 def filter_genre(dic, key, _id, removal_ids, *args, **kwargs):
     ordered_match = [
@@ -34,7 +44,7 @@ def filter_genre(dic, key, _id, removal_ids, *args, **kwargs):
                 del dic['tags']
                 return
     elif len(overlap) == 1:
-        dic[key] = key
+        dic[key] = list(overlap)[0]
         if 'tags' in dic:
             del dic['tags']
         return
@@ -51,7 +61,6 @@ filter_dict = {
     'short_description': delete_from_dict,
     'support_email': delete_from_dict,
     'reviews': delete_from_dict,
-    'screenshots': filter_by_amount,
     'genres': filter_genre,
     'required_age': delete_from_dict,
     'header_image': delete_from_dict,
@@ -67,7 +76,9 @@ filter_dict = {
     'packages': delete_from_dict,
     'categories': delete_from_dict,
     'screenshots': delete_from_dict,
-    'movies': delete_from_dict
+    'movies': delete_from_dict,
+    'metacritic_score': filter_value(lambda x: x > 0),
+    'achievements': delete_from_dict
     }
 
 with open('data/games.json') as f:
@@ -85,5 +96,5 @@ with open('data/games.json') as f:
     for rid in removal_ids:
         del res[rid]
 
-with open('./data/filtered_data.json', 'w') as wf:
+with open('./data/filtered.json', 'w') as wf:
     wf.write(json.dumps(res, indent=4))
