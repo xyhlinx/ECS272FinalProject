@@ -234,6 +234,7 @@ export default {
             const width = 500;
 
             d3.selectAll(".scatterplot").remove();
+            d3.selectAll(".tooltip").remove();
 
             const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
 
@@ -258,6 +259,35 @@ export default {
             svg.append("g")
                 .call(d3.axisLeft(y));
 
+            const tooltip = d3.select(id).append("div")
+                                .style("position", "absolute")
+                                .style("opacity", 0)
+                                .attr("class", "tooltip")
+                                .style("background-color", "white")
+                                .style("border", "solid")
+                                .style("border-width", "1px")
+                                .style("border-radius", "5px")
+                                .style("padding", "10px");
+
+            const mouseover = function(event, d) {
+                tooltip.style("opacity", 1)
+            }
+
+            const mousemove = function(event, d) {
+                tooltip
+                    .html(`Name: ${d.name}<br>
+                           Genre: ${d.genres}`)
+                    .style("left", (event.x)/8 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                    .style("top", (event.y)/8 + "px")
+            }
+
+            const mouseleave = function(event,d) {
+                tooltip
+                  .transition()
+                  .duration(200)
+                  .style("opacity", 0)
+            }
+
             svg.append("g")
                 .selectAll("dot")
                 .data(data)
@@ -268,6 +298,22 @@ export default {
                 .attr("cy", function(d) { return y(d[selection])})
                 .attr("r", 5)
                 .style("fill", function(d) { return colors(d.genres)})
+                .on("mouseover", mouseover )
+                .on("mousemove", mousemove )
+                .on("mouseleave", mouseleave )
+
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width)
+                .attr("y", height + margin.top + 10)
+                .text("Average playtime(Hour)")
+
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -margin.top)
+                .text(selection)
         },
         handleChange(selected) {
             console.log("change y axis " + selected.id + selected.text);
