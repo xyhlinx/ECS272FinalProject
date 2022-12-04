@@ -44,13 +44,35 @@ def filter_genre(dic, key, _id, removal_ids, *args, **kwargs):
                 del dic['tags']
                 return
     elif len(overlap) == 1:
-        dic[key] = dic[key][0]
+        dic[key] = list(overlap)[0]
         if 'tags' in dic:
             del dic['tags']
         return
     else:
         pass
     removal_ids.add(_id)
+
+def squeeze_larger_than_or_equal(num):
+
+    def wrapper(dic, key, _id, removal_ids, *args, **kwargs):
+        if key not in dic:
+            removal_ids.add(_id)
+            return
+        tmp = dic[key].replace(' ', '').split('-')
+        if len(tmp) == 0:
+            removal_ids.add(_id)
+            return
+        if float(tmp[0]) >= num:
+            dic[key] = '>=' + str(num)
+    return wrapper
+
+def gen_categorical(new_key):
+    def wrapper(dic, key, _id, removal_ids, *args, **kwargs):
+        if key not in dic:
+            removal_ids.add(_id)
+            return
+        dic[new_key] = str(dic[key])
+    return wrapper
 
 filter_dict = {
     'average_playtime_2weeks': delete_from_dict,
@@ -78,7 +100,9 @@ filter_dict = {
     'screenshots': delete_from_dict,
     'movies': delete_from_dict,
     'metacritic_score': filter_value(lambda x: x > 0),
-    'achievements': delete_from_dict
+    'estimated_owners': squeeze_larger_than_or_equal(10**7),
+    'price': gen_categorical('price_tag'),
+    'price_tag': squeeze_larger_than_or_equal(59.99)
     }
 
 with open('data/games.json') as f:
