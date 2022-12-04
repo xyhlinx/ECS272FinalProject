@@ -56,16 +56,16 @@ export default {
         },
         drawLegend(id) {
             const height = 120;
-            const width = 1000;
+            const width = 800;
             
             const svg = d3.select(id).append("svg")
                             .attr("width", width)
-                            .attr("height", height - 50);
+                            .attr("height", height);
 
             const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
 
             let dataL = 0;
-            let offset = 90;
+            let offset = 70;
 
             const legend = svg.selectAll(".legend")
                                 .data(this.genres)
@@ -86,22 +86,22 @@ export default {
             legend.append("rect")
                     .attr("x", 0)
                     .attr("y", 0)
-                    .attr("width", 15)
-                    .attr("height", 15)
+                    .attr("width", 10)
+                    .attr("height", 10)
                     .style("fill", function(d) { return (colors(d)); })
 
             legend.append("text")
-                    .attr("x", 20)
-                    .attr("y", 15)
+                    .attr("x", 10)
+                    .attr("y", 10)
                     .text(function(d, i) { return d; })
                     .attr("class", "textselected")
                     .style("text-anchor", "start")
-                    .style("font-size", 15)
+                    .style("font-size", 12)
         },
         drawParallelChart(data, parallel_id, bar_id, scatter_id, cb1, cb2) {
-            const margin = { top: 30, right: 10, bottom: 30, left: 10 };
+            const margin = { top: 0, right: 10, bottom: 30, left: 10 };
             const height = this.keys.length * 120;
-            const width = 800;
+            const width = 700;
             const brushHeight = 50;
 
             d3.selectAll(".parallelchart").remove();
@@ -220,9 +220,9 @@ export default {
             //console.log(finalData)
 
             // draw
-            const margin = { top: 40, right: 40, bottom: 120, left: 100 };
-            const height = 300;
-            const width = 500;
+            const margin = { top: 0, right: 40, bottom: 40, left: 60 };
+            const height = 250;
+            const width = 400;
 
             d3.selectAll(".barchart").remove();
 
@@ -259,13 +259,13 @@ export default {
             svg.append("text")
                 .attr("text-anchor", "end")
                 .attr("x", width)
-                .attr("y", height + margin.top + 10)
+                .attr("y", height + margin.top + 40)
                 .text("Average playtime(Hour)")
 
             svg.append("text")
                 .attr("text-anchor", "end")
                 .attr("transform", "rotate(-90)")
-                .attr("y", -margin.left + 20)
+                .attr("y", -margin.left + 10)
                 .attr("x", -margin.top)
                 .text("Genres")
         },
@@ -275,9 +275,9 @@ export default {
 
             const selection = this.dropdown_selected.text;
 
-            const margin = { top: 40, right: 40, bottom: 120, left: 100 };
-            const height = 300;
-            const width = 500;
+            const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+            const height = 250;
+            const width = 400;
 
             d3.selectAll(".scatterplot").remove();
             d3.selectAll(".tooltip").remove();
@@ -373,7 +373,7 @@ export default {
 <style>
 #col1 {
     height: 100%;
-    width: 50%;
+    width: 60%;
     position: relative;
 }
 
@@ -391,13 +391,13 @@ export default {
 
 #col2 {
     height: 100%;
-    width: 30%;
+    width: 40%;
     position: relative;
 }
 
 #bar_view, #scatter_view {
     height: 50%;
-    width: 50%;
+    width: 100%;
     position: relative;
 }
 </style>
