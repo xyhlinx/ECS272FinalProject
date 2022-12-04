@@ -175,7 +175,7 @@ export default {
                 .enter()
                 .append('g')
                 .attr('class', 'pielegend')
-                .attr('transform', (d, i) => `translate(${Math.floor(i / 5) * 120 + 60}, ${i % 5 * 15 + height / 2})`)
+                .attr('transform', (d, i) => `translate(${Math.floor(i / 5) * 120 + 60}, ${i % 5 * 15})`)
             
             legend.append('rect')
                 .attr('x', 0)
@@ -491,12 +491,12 @@ export default {
     position: relative;
 }
 #pie {
-    height: 60%;
+    height: 80%;
     width: 100%;
     position: relative;
 }
 #pielegend {
-    height: 40%;
+    height: 20%;
     width: 100%;
     position: relative;
 }
