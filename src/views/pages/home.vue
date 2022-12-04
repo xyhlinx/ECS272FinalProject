@@ -1,18 +1,12 @@
 <template>
     <div id="home">
-        <div id="col1">
-            <div id="bar_view">
-                <h1>Welcome Home</h1>
-                <BarChart v-if="dataExists" :myBarchartData="myBarData" />
-            </div>
-        </div>
-        <div id="col2"></div>
+        <PieChart v-if="dataExists" />
     </div>
     
 </template>
 
 <script>
-import BarChart from "../components/barchart.vue"
+import PieChart from '../components/pie_chart.vue'
 import * as d3 from "d3";
 import csvPath from '../../assets/data/SF_Historical_Ballot_Measures.csv';
 
@@ -24,7 +18,7 @@ export default {
         }
     },
     components: {
-        BarChart
+        PieChart
     },
     created(){
         /* Fetch via CSV */
@@ -54,21 +48,6 @@ export default {
     height: 100%;
     position: relative;
     justify-content: center;
-}
-#col1 {
-    height: 100%;
-    width: 50%;
-    position: relative;
-}
-#bar_view {
-    height: 100%;
-    width: 80%;
-    position: relative;
-}
-#col2 {
-    height: 100%;
-    width: 50%;
-    position: relative;
 }
 
 </style>
