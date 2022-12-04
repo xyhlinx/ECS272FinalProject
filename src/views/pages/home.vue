@@ -47,7 +47,6 @@ export default {
     display: flex;
     height: 100%;
     position: relative;
-    justify-content: center;
 }
 
 </style>

@@ -1,9 +1,10 @@
 <template>
-    <div id="col1">
-        <div id="pie"><Dropdown @home_selection="handleChange" /></div>
+    <div id="pie-col1">
+        <div id="pie">Distrubution of <Dropdown @home_selection="handleChange" /></div>
         <div id="pielegend"></div>
     </div>
-    <div id="col2">
+    <div id="pie-col2">
+        <div>playtime of the game</div>
         <div id="beeswarm"></div>
     </div>
 </template>
@@ -174,7 +175,7 @@ export default {
                 .enter()
                 .append('g')
                 .attr('class', 'pielegend')
-                .attr('transform', (d, i) => `translate(${Math.floor(i / 5) * 80 + 60}, ${i % 5 * 10 + margin.top - 80})`)
+                .attr('transform', (d, i) => `translate(${Math.floor(i / 5) * 120 + 60}, ${i % 5 * 15 + height / 2})`)
             
             legend.append('rect')
                 .attr('x', 0)
@@ -186,9 +187,9 @@ export default {
             legend.append('text')
                 .attr('x', 10)
                 .attr('y', 4)
-                .attr('dy', '.6em')
+                .attr('dy', '.5em')
                 // .style('text-anchor', 'end')
-                .style('font-size', 8)
+                .style('font-size', 12)
                 .text(d => d.data.key)
 
         },
@@ -208,7 +209,7 @@ export default {
             }
             data = res
 
-            const margin = { top: 40, right: 20, bottom: 20, left: 60 };
+            const margin = { top: 20, right: 20, bottom: 40, left: 60 };
             const height = 700;
             const width = 1100;
             const dss = this.dropdown_selected.text
@@ -345,7 +346,7 @@ export default {
             }
             data = res
 
-            const margin = { top: 40, right: 20, bottom: 20, left: 60 };
+            const margin = { top: 20, right: 20, bottom: 40, left: 60 };
             const height = 700;
             const width = 1100;
             const dss = this.dropdown_selected.text
@@ -484,7 +485,7 @@ export default {
 
 
 <style>
-#col1 {
+#pie-col1 {
     height: 100%;
     width: 25%;
     position: relative;
@@ -499,7 +500,7 @@ export default {
     width: 100%;
     position: relative;
 }
-#col2 {
+#pie-col2 {
     height: 100%;
     width: 75%;
     position: relative;
