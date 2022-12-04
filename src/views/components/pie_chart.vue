@@ -209,9 +209,9 @@ export default {
             }
             data = res
 
-            const margin = { top: 20, right: 20, bottom: 40, left: 60 };
-            const height = 700;
-            const width = 1100;
+            const margin = { top: 0, right: 20, bottom: 40, left: 20 };
+            const height = 650;
+            const width = 1000;
             const dss = this.dropdown_selected.text
 
             var colors = d3.scaleOrdinal()
@@ -346,9 +346,9 @@ export default {
             }
             data = res
 
-            const margin = { top: 20, right: 20, bottom: 40, left: 60 };
-            const height = 700;
-            const width = 1100;
+            const margin = { top: 0, right: 20, bottom: 40, left: 20 };
+            const height = 650;
+            const width = 1000;
             const dss = this.dropdown_selected.text
 
             var colors = d3.scaleOrdinal()

@@ -23,8 +23,8 @@ export default {
             dataExists: false,
             dropdown_selected: { id: 0, text: 'price'},
             keys: ["price", "metacritic_score", "achievements", "recommendations", "average_playtime_forever"],
-            genres: ["Indie", "Action", "Casual", "Adventure","Simulation", 
-                    "Strategy", "RPG", "Early Access", "Free to Play", "Sports"],
+            genres: ["Action", "Adventure", "Strategy", "Indie",  "RPG", 
+                    "Simulation", "Casual", "Free to Play", "Sports", "Early Access"],
         }
     },
     components: {
@@ -62,7 +62,7 @@ export default {
                             .attr("width", width)
                             .attr("height", height);
 
-            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
+            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeCategory10);
 
             let dataL = 0;
             let offset = 70;
@@ -136,7 +136,7 @@ export default {
                 svg.property("value", selected).dispatch("input");
             }
 
-            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
+            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeCategory10);
 
             const brush = d3.brushX()
                             .extent([
@@ -226,7 +226,7 @@ export default {
 
             d3.selectAll(".barchart").remove();
 
-            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
+            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeCategory10);
 
             const svg = d3.select(id).append("svg")
                                     .attr("class", "barchart")
@@ -282,7 +282,7 @@ export default {
             d3.selectAll(".scatterplot").remove();
             d3.selectAll(".tooltip").remove();
 
-            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeSet3);
+            const colors = d3.scaleOrdinal().domain(this.genres).range(d3.schemeCategory10);
 
             const svg = d3.select(id).append("svg")
                             .attr("class", "scatterplot")
