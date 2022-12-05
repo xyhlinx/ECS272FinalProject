@@ -61,6 +61,7 @@ export default {
                 }
                 const cc = new Map([...c.entries()].sort((a, b) => b[1] - a[1]))
                 var counter = 0
+                var sum_val = 0
                 var color = []
                 for(const entry of cc.entries()) {
                     console.log(entry)
@@ -68,10 +69,15 @@ export default {
                     tmp.set('key', entry[0])
                     tmp.set('value', entry[1])
                     color.push(entry[0])
+                    sum_val += entry[1]
                     preData.push(Object.fromEntries(tmp))
                     if (preData.length >= 10) {
                         break
                     }
+                }
+                for (const e of preData) {
+                    console.log(5432, e)
+                    e.value = Math.round(e.value / sum_val * 100)
                 }
                 this.process_data = preData
                 this.color_binding = color
@@ -137,7 +143,7 @@ export default {
             const mousemove = function(event, d) {
                 tooltip
                     .html(`${dss}: ${d.data.key}<br>
-                           Count: ${d.data.value}`)
+                           Portion: ${d.data.value} %`)
                     .style("left", (event.x)/8 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                     .style("top", (event.y)/8 + "px")
             }
